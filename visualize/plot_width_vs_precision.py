@@ -12,8 +12,6 @@ LOG_DIR = os.path.join(REPO, "logs")
 PROFILE_CSV = os.path.join(LOG_DIR, "sweep_profile.csv")
 OUT_DIR = os.path.join(HERE, "output")
 
-# Map profile-csv label -> log run directory. The sweep dirs were named
-# inconsistently (bin-64 vs bin-d128), so the mapping is explicit on purpose.
 RUNS = {
     "bin-d64": "sweep-pets-fullbin-d64-1000epoch-warm",
     "bin-d128": "sweep-pets-fullbin-d128-1000epoch-warm",
@@ -26,7 +24,6 @@ SOMEFP_LABEL = "bin-d192-somefp"
 
 
 def best_top1(run_dir):
-    """Max val/best_acc1 across all (possibly resumed) event files in a run."""
     best = float("-inf")
     for f in sorted(glob.glob(os.path.join(run_dir, "events.out.tfevents.*"))):
         ea = EventAccumulator(f, size_guidance={"scalars": 0})
@@ -72,9 +69,6 @@ def main():
 
     fp = next(d for d in data if not d["binary"])
     bins = sorted((d for d in data if d["binary"]), key=lambda x: x["d"])
-    # The somefp run is a different architecture (still largely binary, but with
-    # some FP layers), so we draw it as its own marker rather than on the
-    # fullbin line.
     fullbins = [b for b in bins if b["label"] != SOMEFP_LABEL]
     somefps = [b for b in bins if b["label"] == SOMEFP_LABEL]
     for d in data:
@@ -182,7 +176,6 @@ def main():
         ax1.spines[s].set_visible(False)
     ax1.legend(fontsize=8.5, loc="lower right", frameon=True, framealpha=0.9)
 
-    # --- Panel 2: accuracy vs total memory (same style as Panel 1) ------
     bm = [b["mb"] for b in fullbins]
     ax2.axvspan(0, fp["mb"], color=ok_color, alpha=0.07, zorder=0)
     ax2.axvline(
