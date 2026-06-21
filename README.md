@@ -11,7 +11,7 @@ This work was carried out as part of the
 
 ## Training and experiment scripts
 
-All runnable scripts live in [`scripts/`](scripts/):
+All runnable scripts live in [`scripts/`](scripts/).
 
 Model and sweep configurations are in [`configs/`](configs/).
 
